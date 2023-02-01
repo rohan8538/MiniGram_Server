@@ -4,5 +4,8 @@ const loginChk = require('../middlewares/loginChk');
 
 router.post('/followUnfollow', loginChk, userController.followUnfollowUser);
 router.post('/posts', loginChk, userController.getPostsOfFollowing);
+router.post('/myPosts', loginChk, userController.getMyPosts);
+router.post('/userPosts', loginChk, userController.getUserPosts);
+router.delete('/', loginChk, userController.deleteMyProfile);
 
-module.exports = router;
+module.exports = router;   

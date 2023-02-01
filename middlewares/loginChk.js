@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 const { error } = require("../utils/responseWrapper");
 
 module.exports = async (req, res, next) => {
@@ -16,7 +17,16 @@ module.exports = async (req, res, next) => {
             process.env.PRIVATE_ACCESS_TOKEN_KEY
         );
         req._id = tokenUser._id;
+
+        const user = await User.findById(req._id);
+
+        // Checking if user exists
+        if(!user) {
+            return res.send(error(404, 'unregistered user'));
+        }
+
         next();
+        
     } catch (e) {
         console.log(e.message);
         return res.send(error(401, "User not login or the token expired"));
