@@ -7,5 +7,7 @@ router.post('/posts', loginChk, userController.getPostsOfFollowing);
 router.post('/myPosts', loginChk, userController.getMyPosts);
 router.post('/userPosts', loginChk, userController.getUserPosts);
 router.delete('/', loginChk, userController.deleteMyProfile);
+router.get('/myDetails', loginChk, userController.getMyInfo);
+router.put('/', loginChk, userController.updateUserProfile);
 
 module.exports = router;   

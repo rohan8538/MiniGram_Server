@@ -2,6 +2,7 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const { post } = require("../routers/userRouter");
 const { error, success } = require("../utils/responseWrapper");
+const cloudinary = require('cloudinary').v2;
 
 const followUnfollowUser = async (req, res) => {
     try {
@@ -24,7 +25,7 @@ const followUnfollowUser = async (req, res) => {
             const followingIndex = currUserDetails.followings.indexOf(userToFollow);
             currUserDetails.followings.splice(followingIndex, 1);
             
-            followerIndex = userToFollowDetails.followers.indexOf(currUserDetails);
+            const followerIndex = userToFollowDetails.followers.indexOf(currUserDetails);
             userToFollowDetails.followers.splice(followerIndex, 1);
     
             await userToFollowDetails.save();
@@ -146,10 +147,56 @@ const deleteMyProfile = async (req, res) => {
         console.log(error(500, e.message));
     }
 }
+
+const getMyInfo = async (req, res) => {
+    try {
+        const user = await User.findById(req._id);
+        return res.send(success(200, {user}));
+    } catch (e) {
+        res.send(error(500, e.message));
+    }
+}
+
+const updateUserProfile = async (req, res) => {
+    try {
+        const { firstName, lastName, bio, userImg} = req.body;
+
+        const user = await User.findById(req._id);
+
+        if(firstName) {
+            user.firstName = firstName;
+        }
+
+        if(lastName) {
+            user.lastName = lastName;
+        }
+
+        if(bio) {
+            user.bio = bio;
+        }
+
+        if(userImg) {
+            const cloudImg = await cloudinary.uploader.upload(userImg, {
+                folder: 'profileImg'
+            })
+            user.avatar = {
+                url: cloudImg.secure_url,
+                publicId: cloudImg.public_id,
+            }
+        }
+        await user.save();
+        return res.send(success(200, { user }));
+
+    } catch (e) {
+        return res.send(error(500, e.message))
+    }
+}
 module.exports = {
     followUnfollowUser,
     getPostsOfFollowing,
     getMyPosts,
     getUserPosts,
-    deleteMyProfile
+    deleteMyProfile,
+    getMyInfo,
+    updateUserProfile
 };
