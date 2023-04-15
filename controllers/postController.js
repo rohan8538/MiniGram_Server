@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const { success, error } = require("../utils/responseWrapper");
+const cloudinary = require('cloudinary').v2;
 
 
 // getAllPostsController = async (req, res) => {
@@ -11,10 +12,16 @@ const { success, error } = require("../utils/responseWrapper");
 const createPostController = async (req, res) => {
     try {
         const owner = req._id;
-        const {caption} = req.body;
+        const {caption, postImg} = req.body;
 
         if(!caption) {
             return res.send(error(400, 'Please provide caption'));
+        }
+
+        if(postImg) {
+            const cloudImg = await cloudinary.uploader.upload(postImg, {
+                folder: 'postImg'
+            })
         }
         
         const user = await User.findById(owner);
