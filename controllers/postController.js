@@ -36,7 +36,7 @@ const createPostController = async (req, res) => {
         user.posts.push(post._id);
         await user.save();
 
-        return res.json({post});
+        return res.json(success(200, {post}));
 
     } catch (e) {
         res.send(error(500, e.message));
