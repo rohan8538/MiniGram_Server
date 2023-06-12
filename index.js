@@ -35,6 +35,7 @@ app.use(cors({
 //Redirect URLs
 app.use("/auth", authRouter);
 app.use("/createPost", postRouter);
+app.use("/post/likePost", postRouter)
 app.use("/post", userRouter);
 app.use("/user", userRouter)
 app.get("/", (req, res) => {
